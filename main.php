@@ -9,7 +9,11 @@
 define('SERVICE_POST_TYPE_dir', dirname(__FILE__));
 define('SERVICE_POST_TYPE_url', plugins_url('', __FILE__));
 
+
 include SERVICE_POST_TYPE_dir . '/classes/wp-custom-post-types.php';
 CustomPostTypes_wp::init();
+
+include SERVICE_POST_TYPE_dir . '/classes/class.csv-importer.php';
+CustomPostTypes_csvParser::init();
 
 ?>

@@ -81,7 +81,7 @@
 		</tr>
 		<tr>
 			<th> <label for "affiliation"> Affiliation </label> </th>
-			<td> <input type="text" name="services-affiliation" value="" size="50" /> </td>
+			<td> <input type="text" name="services-affiliation" value="<?php echo $meta_values['services-affiliation'][0];  ?>" size="50" /> </td>
 		</tr>
 		<tr>
 			<th> <label for "education"> Education </label> </th>
@@ -129,20 +129,38 @@
 			</td>
 		</tr>
 		<tr>
-			<th> <label for "priv-service"> Private Service </label> </th>
+			<th> <label for "priv-service"> Private</label> </th>
 			<td>
-				<select name="services-priv-service" style="width: 75px;">
-					<option <?php selected('1', $meta_values['services-priv-service'][0]);?>  value="1"> Yes </option>
-					<option <?php selected('0', $meta_values['services-priv-service'][0]);?>  value="0"> No </option>
+				<select name="services-private" style="width: 75px;">
+					<option <?php selected('1', $meta_values['services-private'][0]);?>  value="1"> Yes </option>
+					<option <?php selected('0', $meta_values['services-private'][0]);?>  value="0"> No </option>
 				</select>
 			</td>
 		</tr>
 		<tr>
-			<th> <label for "h-finance"> Housing Finanace </label> </th>
+			<th> <label for "priv-service"> Services </label> </th>
 			<td>
-				<select name="services-h-fin" style="width: 75px;">
-					<option <?php selected('1', $meta_values['services-h-fin'][0]);?>  value="1"> Yes </option>
-					<option <?php selected('0', $meta_values['services-h-fin'][0]);?>  value="0"> No </option>
+				<select name="services-services" style="width: 75px;">
+					<option <?php selected('1', $meta_values['services-services'][0]);?>  value="1"> Yes </option>
+					<option <?php selected('0', $meta_values['services-services'][0]);?>  value="0"> No </option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<th> <label for "h-finance"> Housing</label> </th>
+			<td>
+				<select name="services-house" style="width: 75px;">
+					<option <?php selected('1', $meta_values['services-house'][0]);?>  value="1"> Yes </option>
+					<option <?php selected('0', $meta_values['services-house'][0]);?>  value="0"> No </option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<th> <label for "h-finance"> Finance </label> </th>
+			<td>
+				<select name="services-finance" style="width: 75px;">
+					<option <?php selected('1', $meta_values['services-finance'][0]);?>  value="1"> Yes </option>
+					<option <?php selected('0', $meta_values['services-finance'][0]);?>  value="0"> No </option>
 				</select>
 			</td>
 		</tr>
@@ -192,7 +210,7 @@
 			</td>
 		</tr>
 		<tr>
-			<th> <label for "child-service"> Child Service </label> </th>
+			<th> <label for "child-service"> Child Care </label> </th>
 			<td>
 				<select name="services-child-service" style="width: 75px;">
 					<option <?php selected('1', $meta_values['services-child-service'][0]);?>  value="1"> Yes </option>
@@ -291,7 +309,7 @@
 			</td>
 		</tr>
 		<tr>
-			<th> <label for "department"> Department </label> </th>
+			<th> <label for "department"> Department/Program </label> </th>
 			<td> <input type="text" name="services-department" value="<?php echo $meta_values['services-department'][0]; ?>" size="50" /> </td>
 		</tr>
 		<tr>
@@ -313,9 +331,18 @@
 			</td>
 		</tr>
 		<tr>
-			<th> <label for "pi-supporting"> Program Information Support Group </label> </th>
+			<th> <label for "pi-supporting"> Program Information </label> </th>
 			<td>
-				<select name="services-pi-supporing" style="width: 75px;">
+				<select name="services-program-info" style="width: 75px;">
+					<option <?php selected('1', $meta_values['services-pi-supporing'][0]);?>  value="1"> Yes </option>
+					<option <?php selected('0', $meta_values['services-pi-supporing'][0]);?>  value="0"> No </option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<th> <label for "pi-supporting"> Support Group </label> </th>
+			<td>
+				<select name="services-support-group" style="width: 75px;">
 					<option <?php selected('1', $meta_values['services-pi-supporing'][0]);?>  value="1"> Yes </option>
 					<option <?php selected('0', $meta_values['services-pi-supporing'][0]);?>  value="0"> No </option>
 				</select>
@@ -385,11 +412,20 @@
 			</td>
 		</tr>
 		<tr>
-			<th> <label for "guard-reserve"> Guard Reserve </label> </th>
+			<th> <label for "guard-reserve"> Guard </label> </th>
 			<td>
-				<select name="services-guard-reserve" style="width: 75px;">
-					<option <?php selected('1', $meta_values['services-guard-reserve'][0]);?>  value="1"> Yes </option>
-					<option <?php selected('0', $meta_values['services-guard-reserve'][0]);?>  value="0"> No </option>
+				<select name="services-guard" style="width: 75px;">
+					<option <?php selected('1', $meta_values['services-guard'][0]);?>  value="1"> Yes </option>
+					<option <?php selected('0', $meta_values['services-guard'][0]);?>  value="0"> No </option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<th> <label for "guard-reserve"> Reserve </label> </th>
+			<td>
+				<select name="services-reserve" style="width: 75px;">
+					<option <?php selected('1', $meta_values['services-reserve'][0]);?>  value="1"> Yes </option>
+					<option <?php selected('0', $meta_values['services-reserve'][0]);?>  value="0"> No </option>
 				</select>
 			</td>
 		</tr>

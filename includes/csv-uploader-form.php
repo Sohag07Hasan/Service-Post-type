@@ -1,6 +1,8 @@
 <div class="wrap">
 	<h2>Import Services with CSV</h2>
 	
+	<?php echo self::print_message(); ?>
+	
 	<h4>Instructions </h4>
 	<p style="text-style:italic">
 		1. only csv file is allowed <br/>

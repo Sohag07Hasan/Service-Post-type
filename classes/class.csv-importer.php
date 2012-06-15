@@ -7,7 +7,7 @@
 class CustomPostTypes_csvParser{
 	
 	static $message = array();
-	static $csvkeys = array('id', 'services-org-twitter', 'services-org-facebook', 'services-org-logo', 'services-category', 'services-services-org-name', 'services-addr-1', 'services-addr-2', 'services-city', 'services-state', 'services-zip', 'services-prefix', 'services-name-first', 'services-name-last', 'services-title', 'services-phone-1', 'services-phone-2', 'services-email', 'services-description', 'services-country-govt', 'services-affiliation', 'services-education', 'services-faith-based', 'services-state-govt', 'services-non-profit', 'services-fed-govt', 'services-private', 'services-services', 'services-house', 'services-finance', 'services-employment', 'services-fin-aid', 'services-transport', 'services-recreation', 'services-tranition-support', 'services-health-care', 'services-edu-service', 'services-child-service', 'services-food', 'services-legal-aid', 'services-disabilitly-service', 'services-senior-assistance', 'services-esl', 'services-util-assistance', 'services-tricare', 'services-service-inquery', 'services-currently-serve', 'services-department', 'services-counselling', 'services-substance-abusing', 'services-program-info', 'services-support-group', 'services-youth-services', 'services-com-events', 'services-pub-safety', 'services-volunteer', 'services-b-assistance', 'services-add-service', 'services-population-served', 'services-active', 'services-guard', 'services-reserve', 'services-veteran', 'services-cfs');
+	static $csvkeys = array('id', 'services-org-twitter', 'services-org-facebook', 'services-org-logo', 'category', 'services-services-org-name', 'services-addr-1', 'services-addr-2', 'services-city', 'services-state', 'services-zip', 'services-prefix', 'services-name-first', 'services-name-last', 'title', 'services-phone-1', 'services-phone-2', 'services-email', 'description', 'services-country-govt', 'services-affiliation', 'services-education', 'services-faith-based', 'services-state-govt', 'services-non-profit', 'services-fed-govt', 'services-private', 'services-services', 'services-house', 'services-finance', 'services-employment', 'services-fin-aid', 'services-transport', 'services-recreation', 'services-tranition-support', 'services-health-care', 'services-edu-service', 'services-child-service', 'services-food', 'services-legal-aid', 'services-disabilitly-service', 'services-senior-assistance', 'services-esl', 'services-util-assistance', 'services-tricare', 'services-service-inquery', 'services-currently-serve', 'services-department', 'services-counselling', 'services-substance-abusing', 'services-program-info', 'services-support-group', 'services-youth-services', 'services-com-events', 'services-pub-safety', 'services-volunteer', 'services-b-assistance', 'services-add-service', 'services-population-served', 'services-active', 'services-guard', 'services-reserve', 'services-veteran', 'services-cfs');
 	
 	static function init(){
 		add_action('admin_menu', array(get_class(), 'subMenuForCsv'));
@@ -30,8 +30,7 @@ class CustomPostTypes_csvParser{
 			else{
 				self::$message['error'][] = 'Selected File is not a csv. aborting...';			
 			}
-			
-			
+						
 		endif;
 	}
 	
@@ -41,7 +40,7 @@ class CustomPostTypes_csvParser{
 	}
 	
 	static function importForm(){
-		echo count(self::$csvkeys);
+		//echo count(self::$csvkeys);
 		include SERVICE_POST_TYPE_dir . '/includes/csv-uploader-form.php';
 	}
 	
@@ -83,31 +82,73 @@ class CustomPostTypes_csvParser{
 		//uploading started
 		$skipped = 0;
 		$imported = 0;
+		$updated = 0;
+		
 		$csv->symmetrize();
-		var_dump(self::$csvkeys);						
+
+		$existing_services = self::get_existing_services_ID();
+									
 		foreach ($csv->getRawArray() as $key_index=>$csv_data) {
+			//skipping the first row
+			if($key_index == 0) continue;		
 			
-		//	if($key_index == 0) continue;
-			var_dump($csv_data);
+			$post_data = array_combine(self::$csvkeys, $csv_data);
 			
-			/*		
-			if(self::create_service($csv_data)){
-				$imported ++;
+			//var_dump($post_data);
+			
+			
+			//checking if it is an update or new  service
+			if(in_array($post_data['id'], $existing_services)){
+				if(empty($post_data['title']) || empty($post_data['description'])){
+					$skipped ++;
+				}
+				else{
+					$post_ID = self::update_post($post_data);
+					if($post_ID){
+						$updated ++;
+						self::create_post_meta($post_ID, $post_data);
+						self::set_category($post_ID, $post_data);
+					}
+					else{
+						$skipped ++;
+					}
+				}
+				
 			}
 			else{
-				$skipped ++;
+				
+				if(empty($post_data['title']) || empty($post_data['description'])){
+						$skipped ++;
+				}
+				else{
+					$post_ID = self::create_post($post_data);							
+					
+					if($post_ID){
+						$imported ++;
+						self::create_post_meta($post_ID, $post_data);
+						self::set_category($post_ID, $post_data);
+					}
+					else{
+						$skipped ++;
+					}
+				}			
 			}
-			*/
+			
 		}
-
-		$exec_time = microtime(true) - $time_start;
-		if ($skipped) {
-			self::$message['notice'][] = "<b>Skipped {$skipped}names (most likely due to empty content).</b>";
-		}
-		self::$message['notice'][] = sprintf("<b>Imported {$imported} names in %.2f seconds.</b>", $exec_time);
 		
-		exit;
+		
+		
+		$exec_time = microtime(true) - $time_start;
+		
+		if ($skipped) {
+			self::$message['notice'][] = "<b>Skipped {$skipped} services (most likely due to empty content or empty title).</b>";
+		}
+		self::$message['notice'][] = sprintf("<b>Imported {$imported} services in %.2f seconds.</b>", $exec_time);
+		self::$message['notice'][] = sprintf("<b>Updated {$updated} services in %.2f seconds.</b>", $exec_time);
+				
 	}
+	
+
 	
 	//stip boom
 	static function stripBOM($fname){
@@ -137,4 +178,85 @@ class CustomPostTypes_csvParser{
 		
 	}
 	
+	
+	/*
+	 * create the post and return the post id
+	 * */
+	static function create_post($post_data){
+		$data = array(
+				'post_title' => $post_data['title'],
+				'post_type' => CustomPostTypes_wp::posttype,
+				'post_status' => 'publish',
+				'post_content' => $post_data['description']
+			);
+						
+		return wp_insert_post($data);
+	}
+	
+	//update the post
+	static function update_post($post_data){
+		$data = array(
+				'ID' => $post_data['id'],
+				'post_title' => $post_data['title'],
+				'post_type' => CustomPostTypes_wp::posttype,
+				'post_status' => 'publish',
+				'post_content' => $post_data['description']
+			);
+		
+		return wp_update_post($data);
+	}
+	
+	
+	//set the category of the post
+	static function set_category($post_id, $post_data){
+		return wp_set_object_terms($post_id, array($post_data['category']), 'category', false);
+	}
+	
+	
+	//create meta data for the post
+	static function create_post_meta($post_id, $data){
+		foreach ($data as $key=>$value){
+			if(strstr($key, 'services')){
+				update_post_meta($post_id, $key, $value);
+			}
+		}
+	}
+	
+	/*
+	 * print messages
+	 * */
+	static function print_message(){
+		if(empty(self::$message)) return '';
+		
+		$msg = '';
+		
+		if(count(self::$message['error']) > 0){
+			$msg .= '<div class="error">';
+			foreach(self::$message['error'] as $value){
+				$msg .= '<p>' . $value . '</p>';
+			}
+			
+			$msg .= '</div>';
+		}
+		
+		if(count(self::$message['notice']) > 0){
+		$msg .= '<div class="updated">';
+			foreach(self::$message['notice'] as $value){
+				$msg .= '<p>' . $value . '</p>';
+			}
+			
+			$msg .= '</div>';
+		}
+		
+		return $msg;
+	}
+		
+	//returns the ids of the existing services
+	
+	static function get_existing_services_ID(){
+		global $wpdb;
+		$post_type = CustomPostTypes_wp::posttype;
+		
+		return $wpdb->get_col("SELECT ID FROM $wpdb->posts WHERE post_type = '$post_type'");
+	}
 }

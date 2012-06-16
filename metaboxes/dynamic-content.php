@@ -1,8 +1,25 @@
 <div class="wrap">
 	<table class="form-table">
 		
+		
 		<?php 
 			foreach(self::$text_keys as $key=>$value) :
+				if($key == 'orgLogo') :
+				
+				?>
+				
+				<tr>
+					<th> <label for "<?php echo $value; ?>"> <?php echo $value; ?> </label> </th>
+					<td> 
+						<input type="text" id="<?php echo 'services-'.$key; ?>" name="<?php echo 'services-'.$key; ?>" size="50" value="<?php echo $meta_values['services-'.$key][0]; ?>" /> 
+						<input type="button" id="wp_add_meta_image" value="Media Libray"/>
+					</td>
+				</tr>
+				
+				
+				<?php 
+				
+				else:
 				?>
 				
 				<tr>
@@ -10,7 +27,8 @@
 					<td> <input type="text" name="<?php echo 'services-'.$key; ?>" size="50" value="<?php echo $meta_values['services-'.$key][0]; ?>" /> </td>
 				</tr>
 				
-				<?php 
+				<?php
+				endif;
 			endforeach;
 		?>
 		

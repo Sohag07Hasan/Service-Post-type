@@ -22,7 +22,20 @@ class CustomPostTypes_wp{
 		add_action('init', array(get_class(), 'add_new_posttype'));
 		add_action('add_meta_boxes',array(get_class(), 'add_metaboxes'));
 		add_action('save_post', array(get_class(), 'saveMetaBoxesData'), 100, 2);
+		
+		add_action('admin_enqueue_scripts', array(get_class(), 'js_add'));
 	}
+	
+	/*
+	 * css and js add for default media uploader
+	 * */
+	static function js_add(){
+		wp_enqueue_style('thickbox');
+		wp_enqueue_script('jquery');
+		wp_enqueue_script('media-uploader-services', SERVICE_POST_TYPE_url . '/js/media-uploader.js', array('jquery', 'media-upload', 'thickbox'));
+	}
+	
+	
 	
 	/*
 	 * creates a new post type

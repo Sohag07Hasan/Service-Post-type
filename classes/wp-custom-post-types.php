@@ -9,6 +9,11 @@ class CustomPostTypes_wp{
 	const name = 'Services';
 	const singular = 'Service';
 	
+	//different keys
+	static $text_keys = array('orgName'=>'Organization', 'orgTwitter'=>'Organization Twitter', 'orgFb'=>'Organization Facebook', 'orgLogo'=>'Organization Logo', 'addr1'=>'Address 1', 'addr2'=>'Address 2', 'city'=>'City', 'state'=>'State', 'zip'=>'Zip', 'prefix'=>'Prefix', 'fName'=>'FirstName', 'lName'=>'Last Name', 'phone1'=>'Phone 1', 'phone2'=>'Phone 2', 'email'=>'Email', 'affiliation'=>'Affiliation', 'dept'=>'Department/Program');
+	static $booleans = array('countryGovt'=>'Country Govenment', 'edu'=>'Education', 'faith'=>'Faith Based', 'stateGovt'=>'State Government', 'nonProfit'=>'Non Profilt', 'fedGovt'=>'Federal Government', 'private'=>'Private Services', 'housing'=>'Housing', 'fin'=>'Financial', 'employment'=>'Employment', 'finAid'=>'Financial Aid', 'transport'=>'Transportation', 'health'=>'Health Care', 'eduService'=>'Education Service', 'child'=>'Child Care', 'recreation'=>'Recreation', 'food'=>'Food', 'leagalAid'=>'Legal Aid', 'disServ'=>'Disability Service', 'senAssist'=>'Senior Assistance', 'esl'=>'ESL', 'utilAssist'=>'Utililty Assistance', 'tricare'=>'Tri Care', 'serInq'=>'service Inquery', 'currServe'=>'Currently Serve', 'counceling'=>'Counselling', 'subAbuse'=>'Substance Abusing', 'progInfo'=>'Program Information', 'supGroup'=>'Support Group', 'youthServe'=>'Youth Services', 'ComEvent'=> 'Community Events', 'pubSafety'=>'Public Safety', 'volunteer'=> 'Volunteer', 'benAssistance'=>'Benefit Assistance', 'addServe'=>'Additional Services', 'guard'=>'Guard', 'reserve'=>'Reserve', 'veteran'=>'Veteran');
+	static $text_areas = array('condition'=>'Conditions for Services');
+	
 	
 	//meta keys different groups
 	
@@ -70,7 +75,8 @@ class CustomPostTypes_wp{
 		global $post;		
 		$meta_values = self::getPostMeta($post->ID);
 		
-		include SERVICE_POST_TYPE_dir . '/metaboxes/metabox-content.php';
+		//include SERVICE_POST_TYPE_dir . '/metaboxes/metabox-content.php';
+		include SERVICE_POST_TYPE_dir . '/metaboxes/dynamic-content.php';
 	}
 	
 	

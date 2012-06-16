@@ -39,7 +39,7 @@
 			<td> <input type="text" name="services-state" value="<?php echo $meta_values['services-state'][0]; ?>" size="50" /> </td>
 		</tr>
 		<tr>
-			<th> <label for "zip"> State </label> </th>
+			<th> <label for "zip"> Zip </label> </th>
 			<td> <input type="text" name="services-zip" value="<?php echo $meta_values['services-zip'][0]; ?>" size="50" /> </td>
 		</tr>
 		<!-- end address data -->

@@ -7,7 +7,9 @@
 class CustomPostTypes_csvParser{
 	
 	static $message = array();
-	static $csvkeys = array('id', 'services-org-twitter', 'services-org-facebook', 'services-org-logo', 'category', 'services-services-org-name', 'services-addr-1', 'services-addr-2', 'services-city', 'services-state', 'services-zip', 'services-prefix', 'services-name-first', 'services-name-last', 'title', 'services-phone-1', 'services-phone-2', 'services-email', 'description', 'services-country-govt', 'services-affiliation', 'services-education', 'services-faith-based', 'services-state-govt', 'services-non-profit', 'services-fed-govt', 'services-private', 'services-services', 'services-house', 'services-finance', 'services-employment', 'services-fin-aid', 'services-transport', 'services-recreation', 'services-tranition-support', 'services-health-care', 'services-edu-service', 'services-child-service', 'services-food', 'services-legal-aid', 'services-disabilitly-service', 'services-senior-assistance', 'services-esl', 'services-util-assistance', 'services-tricare', 'services-service-inquery', 'services-currently-serve', 'services-department', 'services-counselling', 'services-substance-abusing', 'services-program-info', 'services-support-group', 'services-youth-services', 'services-com-events', 'services-pub-safety', 'services-volunteer', 'services-b-assistance', 'services-add-service', 'services-population-served', 'services-active', 'services-guard', 'services-reserve', 'services-veteran', 'services-cfs');
+	//static $csvkeys = array('id', 'services-org-twitter', 'services-org-facebook', 'services-org-logo', 'category', 'services-services-org-name', 'services-addr-1', 'services-addr-2', 'services-city', 'services-state', 'services-zip', 'services-prefix', 'services-name-first', 'services-name-last', 'title', 'services-phone-1', 'services-phone-2', 'services-email', 'description', 'services-country-govt', 'services-affiliation', 'services-education', 'services-faith-based', 'services-state-govt', 'services-non-profit', 'services-fed-govt', 'services-private', 'services-services', 'services-house', 'services-finance', 'services-employment', 'services-fin-aid', 'services-transport', 'services-recreation', 'services-tranition-support', 'services-health-care', 'services-edu-service', 'services-child-service', 'services-food', 'services-legal-aid', 'services-disabilitly-service', 'services-senior-assistance', 'services-esl', 'services-util-assistance', 'services-tricare', 'services-service-inquery', 'services-currently-serve', 'services-department', 'services-counselling', 'services-substance-abusing', 'services-program-info', 'services-support-group', 'services-youth-services', 'services-com-events', 'services-pub-safety', 'services-volunteer', 'services-b-assistance', 'services-add-service', 'services-population-served', 'services-active', 'services-guard', 'services-reserve', 'services-veteran', 'services-cfs');
+	
+	static $csvkeys = array('id', 'services-orgTwitter', 'services-orgFb', 'services-orgLogo', 'category', 'services-orgName', 'services-addr1', 'services-addr2', 'services-city', 'services-state', 'services-zip', 'services-prefix', 'services-fName', 'services-lName', 'title', 'services-phone1', 'services-phone2', 'services-email', 'description', 'services-countryGovt', 'services-affiliation', 'services-edu', 'services-faith', 'services-stateGovt', 'services-nonProfit', 'services-fedGovt', 'services-private', 'services-addServices', 'services-housing', 'services-fin', 'services-employment', 'services-finAid', 'services-transport', 'services-recreation', 'services-transition', 'services-health', 'services-eduService', 'services-child', 'services-food', 'services-legalAid', 'services-disServ', 'services-senAssist', 'services-esl', 'services-utilAssist', 'services-tricare', 'services-serInq', 'services-currServe', 'services-dept', 'services-counseling', 'services-subAbuse', 'services-progInfo', 'services-supGroup', 'services-youthServe', 'services-ComEvent', 'services-pubSafety', 'services-volunteer', 'services-benAssistance', 'services-addServe', 'services-Population', 'active', 'services-guard', 'services-reserve', 'services-veteran', 'services-condition');
 	
 	static function init(){
 		add_action('admin_menu', array(get_class(), 'subMenuForCsv'));
@@ -93,10 +95,7 @@ class CustomPostTypes_csvParser{
 			if($key_index == 0) continue;		
 			
 			$post_data = array_combine(self::$csvkeys, $csv_data);
-			
-			//var_dump($post_data);
-			
-			
+									
 			//checking if it is an update or new  service
 			if(in_array($post_data['id'], $existing_services)){
 				if(empty($post_data['title']) || empty($post_data['description'])){
@@ -186,7 +185,7 @@ class CustomPostTypes_csvParser{
 		$data = array(
 				'post_title' => $post_data['title'],
 				'post_type' => CustomPostTypes_wp::posttype,
-				'post_status' => 'publish',
+				'post_status' => ($post_data['active'] == 'Y') ? 'publish' : 'draft',
 				'post_content' => $post_data['description']
 			);
 						
@@ -199,7 +198,7 @@ class CustomPostTypes_csvParser{
 				'ID' => $post_data['id'],
 				'post_title' => $post_data['title'],
 				'post_type' => CustomPostTypes_wp::posttype,
-				'post_status' => 'publish',
+				'post_status' => ($post_data['active'] == 'Y') ? 'publish' : 'draft',
 				'post_content' => $post_data['description']
 			);
 		

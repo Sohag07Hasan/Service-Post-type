@@ -15,7 +15,7 @@ get_template_part( 'services','searchform');
  if(isset($_REQUEST['qstring'])) :
  
 	 function query_changing($where, &$wp_query){
-		//var_dump($where);
+		
 		global $wpdb;
 		$qstring = $_REQUEST['qstring'];
 		if($qstring == '') return $where;
@@ -33,31 +33,75 @@ get_template_part( 'services','searchform');
 	 }
 	 
 	 //over all request
-	 function posts_request($query, $wp_query){
+	 function posts_request($query, &$wp_query){
 		var_dump($query);
 		exit;
+	 }	 
+	
+	 
+	 function the_posts($posts){
+		$intake = $posts;
+		$sanitize = array();
+		$modified_postlists = array();
+		
+		foreach($posts as $key=>$post){
+			$sanitize[$key] = $post->ID;
+		}
+		$unique = array_unique($sanitize);
+		
+		foreach($unique as $key=>$value){
+			$modified_postlists[] = $intake[$key];
+		}
+		
+		return $modified_postlists;
+		
 	 }
-	   
 	
 	//filters are added here
-	add_filter('posts_where_paged', 'query_changing',10,2);
-	add_filter('posts_join_paged', 'inner_join', 100, 2);	
+	add_filter('posts_where', 'query_changing',10,2);
+	add_filter('posts_join', 'inner_join', 100, 2);	
 	//add_filter('posts_request', 'posts_request', 100, 2);	
+	
+	add_filter('the_posts', 'the_posts', 100);
+		
  endif;
  
+  
+ function post_limits($limit, &$wp_query){
+	if(isset($_REQUEST['qstring'])){
+		return $limit;
+	}
+	return "LIMIT 50";
+ }
+ add_filter('post_limits', 'post_limits', 100, 2);
  
  //end of the search feature
  
  
  $args = array( 
 		'post_type' => 'services',
-		'posts_per_page' => 50,
-		'post_status' => 'publish'				
+		'posts_per_page' => -1,				
 	);
  
  
+
+ if(isset($_REQUEST['qstring'])) :
+  $meta_query = array('relation'=>'AND');
+ 
+	foreach($_GET as $key=>$value){
+		if(strstr($key, 'services')){
+			$meta_query[] = array(
+				'key' => $key,
+				'value' => $value
+			);
+		}
+	}
+	
+   $args['meta_query'] = $meta_query;
+ endif;
  
  $wp_query = new WP_Query( $args );
+ 
  while ( $wp_query->have_posts() ) : $wp_query->the_post();
 	get_template_part( 'content','services'); 
  endwhile;

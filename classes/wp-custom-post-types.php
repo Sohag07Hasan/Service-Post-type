@@ -59,6 +59,7 @@ class CustomPostTypes_wp{
 		);
 		$args = array(
 			'labels' => $labels,
+			'exclude_from_search' => true,
 			'public' => true,
 			'publicly_queryable' => true,
 			'show_ui' => true, 

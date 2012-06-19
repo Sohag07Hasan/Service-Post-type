@@ -22,7 +22,8 @@ get_header(); ?>
 								<?php the_content(); ?>
 							</div><!-- .entry-content -->
 							
-
+							<?php  do_action('post_view_count', get_the_ID()); ?>
+							
 							<footer class="entry-meta">
 								
 								<?php

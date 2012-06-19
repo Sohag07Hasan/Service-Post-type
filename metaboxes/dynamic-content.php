@@ -9,9 +9,9 @@
 				?>
 				
 				<tr>
-					<th> <label for "<?php echo $value; ?>"> <?php echo $value; ?> </label> </th>
+					<td> <label for="<?php echo 'sservices-'.$key; ?>"> <?php echo $value; ?> </label> </td>
 					<td> 
-						<input type="text" id="<?php echo 'services-'.$key; ?>" name="<?php echo 'services-'.$key; ?>" size="50" value="<?php echo $meta_values['services-'.$key][0]; ?>" /> 
+						<input type="text" id="<?php echo 'sservices-'.$key; ?>" name="<?php echo 'services-'.$key; ?>" size="50" value="<?php echo $meta_values['services-'.$key][0]; ?>" /> 
 						<input type="button" id="wp_add_meta_image" value="Media Libray"/>
 					</td>
 				</tr>
@@ -23,8 +23,8 @@
 				?>
 				
 				<tr>
-					<th> <label for "<?php echo $value; ?>"> <?php echo $value; ?> </label> </th>
-					<td> <input type="text" name="<?php echo 'services-'.$key; ?>" size="50" value="<?php echo $meta_values['services-'.$key][0]; ?>" /> </td>
+					<td> <label for="<?php echo 'sservices-'.$key; ?>"> <?php echo $value; ?> </label> </td>
+					<td> <input id="<?php echo 'sservices-'.$key; ?>" type="text" id="<?php echo 'sservices-'.$key; ?>" name="<?php echo 'services-'.$key; ?>" size="50" value="<?php echo $meta_values['services-'.$key][0]; ?>" /> </td>
 				</tr>
 				
 				<?php
@@ -37,8 +37,9 @@
 				?>
 				
 				<tr>
-					<th> <label for "<?php echo $value; ?>"> <?php echo $value; ?> </label> </th>
-					<td> <input type="checkbox" name="<?php echo 'services-'.$key; ?>" <?php checked('Y', $meta_values['services-'.$key][0]); ?> value="Y" /> available?</td>
+					<td> <input id="<?php echo 'sservices-'.$key; ?>" type="checkbox" name="<?php echo 'services-'.$key; ?>" <?php checked('Y', $meta_values['services-'.$key][0]); ?> value="Y" /></td>
+					<td> <label for="<?php echo 'sservices-'.$key; ?>"> <?php echo $value; ?> </label> </td>
+					
 				</tr>
 				
 				<?php 
@@ -50,8 +51,8 @@
 				?>
 				
 				<tr>
-					<th> <label for "<?php echo $value; ?>"> <?php echo $value; ?> </label> </th>
-					<td><textarea rows="3" cols="70" name="<?php echo 'services-'.$key; ?>"><?php echo $meta_values['services-'.$key][0]; ?></textarea></td>
+					<td> <label for="<?php echo 'sservices-'.$key; ?>"> <?php echo $value; ?> </label> </td>
+					<td><textarea rows="3" cols="70" id="<?php echo 'sservices-'.$key; ?>" name="<?php echo 'services-'.$key; ?>"><?php echo $meta_values['services-'.$key][0]; ?></textarea></td>
 				</tr>
 				
 				<?php 

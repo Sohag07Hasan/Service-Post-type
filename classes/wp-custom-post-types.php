@@ -14,6 +14,7 @@ class CustomPostTypes_wp{
 	static $booleans = array('countryGovt'=>'Country Govenment', 'edu'=>'Education', 'faith'=>'Faith Based', 'stateGovt'=>'State Government', 'nonProfit'=>'Non Profilt', 'fedGovt'=>'Federal Government', 'private'=>'Private Services', 'housing'=>'Housing', 'fin'=>'Financial', 'employment'=>'Employment', 'finAid'=>'Financial Aid', 'transport'=>'Transportation', 'health'=>'Health Care', 'eduService'=>'Education Service', 'child'=>'Child Care', 'recreation'=>'Recreation', 'food'=>'Food', 'leagalAid'=>'Legal Aid', 'disServ'=>'Disability Service', 'senAssist'=>'Senior Assistance', 'esl'=>'ESL', 'utilAssist'=>'Utililty Assistance', 'tricare'=>'Tri Care', 'serInq'=>'service Inquery', 'currServe'=>'Currently Serve', 'counceling'=>'Counselling', 'subAbuse'=>'Substance Abusing', 'progInfo'=>'Program Information', 'supGroup'=>'Support Group', 'youthServe'=>'Youth Services', 'ComEvent'=> 'Community Events', 'pubSafety'=>'Public Safety', 'volunteer'=> 'Volunteer', 'benAssistance'=>'Benefit Assistance', 'addServe'=>'Additional Services', 'guard'=>'Guard', 'reserve'=>'Reserve', 'veteran'=>'Veteran');
 	static $text_areas = array('condition'=>'Conditions for Services');
 	
+	static $counted = 0;
 	
 	//meta keys different groups
 	
@@ -24,6 +25,9 @@ class CustomPostTypes_wp{
 		add_action('save_post', array(get_class(), 'saveMetaBoxesData'), 100, 2);
 		
 		add_action('admin_enqueue_scripts', array(get_class(), 'js_add'));
+		
+		//post visit counts
+		add_action('post_view_count', array(get_class(), 'count_update'));
 	}
 	
 	/*
@@ -109,5 +113,24 @@ class CustomPostTypes_wp{
 	//return the post meta vlues
 	static function getPostMeta($post_id){
 		return get_post_custom($post_id);
+	}
+	
+	
+	//update the count
+	static function count_update($post_id){
+		//global $post;
+		//var_dump($post);
+		if(self::$counted > 0 ) return;		
+		$count = get_post_meta($post_id, 'total_viewed', true);
+		if($count){
+			$count ++;
+		}
+		else{
+			$count = 1;
+		}
+		
+		update_post_meta($post_id, 'total_viewed', $count);
+		
+		self::$counted ++ ;
 	}
 }

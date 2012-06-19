@@ -15,12 +15,14 @@ get_template_part( 'services','searchform');
  if(isset($_REQUEST['qstring'])) :
  
 	 function query_changing($where, &$wp_query){
-		
+			
 		global $wpdb;
 		$qstring = $_REQUEST['qstring'];
 		if($qstring == '') return $where;
+				
+		$where .= ' AND ' . '((' . $wpdb->posts . '.post_title LIKE ' . "'%$qstring%'" . ') OR (' . $wpdb->posts . '.post_content LIKE ' . "'%$qstring%'" . ') OR (' . $wpdb->postmeta . '.meta_value LIKE ' . "'%$qstring%'" . '))';
 		
-		$where = ' AND ' . '(((' . $wpdb->posts . '.post_title LIKE ' . "'%$qstring%'" . ') OR (' . $wpdb->posts . '.post_content LIKE ' . "'%$qstring%'" . ') OR (' . $wpdb->postmeta . '.meta_value LIKE ' . "'%$qstring%'" . ')))' . ' AND ' . $wpdb->posts . '.post_type IN ' . "('services')" . ' AND ' . $wpdb->posts . '.post_status = ' . "'publish'";
+		
 		return $where;
 	 }
 	 
@@ -34,7 +36,7 @@ get_template_part( 'services','searchform');
 	 
 	 //over all request
 	 function posts_request($query, &$wp_query){
-		var_dump($query);
+		echo $query;
 		exit;
 	 }	 
 	
@@ -53,7 +55,39 @@ get_template_part( 'services','searchform');
 			$modified_postlists[] = $intake[$key];
 		}
 		
-		return $modified_postlists;
+		//return $modified_postlists;
+		
+		//now sorting
+		$sorted = array();
+		if($_REQUEST['sort_by'] == 'title') :
+		
+			foreach($modified_postlists as $key => $post) :
+				$sorted[$key] = $post->post_title;
+			endforeach;
+			asort($sorted);
+			$return_sorted = array();
+			foreach($sorted as $key => $title){
+				$return_sorted[] = $modified_postlists[$key];
+			}			
+			return $return_sorted;
+			
+		elseif($_REQUEST['sort_by'] == 'views') :
+		
+			foreach($modified_postlists as $key => $post) :
+				$count = get_post_meta($post->ID, 'total_viewed', true);
+				$sorted[$key] = ($count) ? $count : 0;
+			endforeach;
+			arsort($sorted);
+			$return_sorted = array();
+			foreach($sorted as $key => $title){
+				$return_sorted[] = $modified_postlists[$key];
+			}			
+			return $return_sorted;
+				
+		else:
+			return $modified_postlists;
+		endif;
+		
 		
 	 }
 	
@@ -80,7 +114,8 @@ get_template_part( 'services','searchform');
  
  $args = array( 
 		'post_type' => 'services',
-		'posts_per_page' => -1,				
+		'posts_per_page' => -1,
+		'post_status' => 'publish'			
 	);
  
  

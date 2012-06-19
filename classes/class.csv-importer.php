@@ -8,8 +8,9 @@ class CustomPostTypes_csvParser{
 	
 	static $message = array();
 	//static $csvkeys = array('id', 'services-org-twitter', 'services-org-facebook', 'services-org-logo', 'category', 'services-services-org-name', 'services-addr-1', 'services-addr-2', 'services-city', 'services-state', 'services-zip', 'services-prefix', 'services-name-first', 'services-name-last', 'title', 'services-phone-1', 'services-phone-2', 'services-email', 'description', 'services-country-govt', 'services-affiliation', 'services-education', 'services-faith-based', 'services-state-govt', 'services-non-profit', 'services-fed-govt', 'services-private', 'services-services', 'services-house', 'services-finance', 'services-employment', 'services-fin-aid', 'services-transport', 'services-recreation', 'services-tranition-support', 'services-health-care', 'services-edu-service', 'services-child-service', 'services-food', 'services-legal-aid', 'services-disabilitly-service', 'services-senior-assistance', 'services-esl', 'services-util-assistance', 'services-tricare', 'services-service-inquery', 'services-currently-serve', 'services-department', 'services-counselling', 'services-substance-abusing', 'services-program-info', 'services-support-group', 'services-youth-services', 'services-com-events', 'services-pub-safety', 'services-volunteer', 'services-b-assistance', 'services-add-service', 'services-population-served', 'services-active', 'services-guard', 'services-reserve', 'services-veteran', 'services-cfs');
+	static $csv_headers = array('ID', 'Organization Twitter Handle', 'Organization Facebook Page', 'Organization Logo', 'Category', 'Organization', 'Address', 'Address 2', 'City', 'State', 'Zip', 'Prefix', 'First', 'Last', 'Title', 'Phone', 'Phone 2', 'Email', 'Service Description', 'County Government', 'Affiliation', 'Education', 'Faith-Based', 'State Government', 'Non Profit', 'Federal Government', 'Private', 'Services', 'Housing', 'Financial', 'Employment', 'Financial Aid', 'Transportation', 'Recreation', 'Transition Support', 'Health Care', 'Education Service', 'Child Care', 'Food', 'Legal Aid', 'Disability Services', 'Senior Assistance', 'ESL', 'Utilities Assistance', 'TRICARE', 'Service Inquiry', 'Currently Serve', 'Department/Program', 'Counseling', 'Substance Abuse', 'Program Information', 'Support Group', 'Youth Services', 'Community Events', 'Public Safety', 'Volunteer', 'Benefits Assistance', 'Additional Services', 'Population Served', 'Active Only', 'Guard', 'Reserve', 'Veteran', 'Conditions for Service');
 	
-	static $csvkeys = array('id', 'services-orgTwitter', 'services-orgFb', 'services-orgLogo', 'category', 'services-orgName', 'services-addr1', 'services-addr2', 'services-city', 'services-state', 'services-zip', 'services-prefix', 'services-fName', 'services-lName', 'title', 'services-phone1', 'services-phone2', 'services-email', 'description', 'services-countryGovt', 'services-affiliation', 'services-edu', 'services-faith', 'services-stateGovt', 'services-nonProfit', 'services-fedGovt', 'services-private', 'services-addServices', 'services-housing', 'services-fin', 'services-employment', 'services-finAid', 'services-transport', 'services-recreation', 'services-transition', 'services-health', 'services-eduService', 'services-child', 'services-food', 'services-legalAid', 'services-disServ', 'services-senAssist', 'services-esl', 'services-utilAssist', 'services-tricare', 'services-serInq', 'services-currServe', 'services-dept', 'services-counseling', 'services-subAbuse', 'services-progInfo', 'services-supGroup', 'services-youthServe', 'services-ComEvent', 'services-pubSafety', 'services-volunteer', 'services-benAssistance', 'services-addServe', 'services-Population', 'active', 'services-guard', 'services-reserve', 'services-veteran', 'services-condition');
+	static $csvkeys = array('services-id', 'services-orgTwitter', 'services-orgFb', 'services-orgLogo', 'category', 'services-orgName', 'services-addr1', 'services-addr2', 'services-city', 'services-state', 'services-zip', 'services-prefix', 'services-fName', 'services-lName', 'title', 'services-phone1', 'services-phone2', 'services-email', 'description', 'services-countryGovt', 'services-affiliation', 'services-edu', 'services-faith', 'services-stateGovt', 'services-nonProfit', 'services-fedGovt', 'services-private', 'services-addServices', 'services-housing', 'services-fin', 'services-employment', 'services-finAid', 'services-transport', 'services-recreation', 'services-transition', 'services-health', 'services-eduService', 'services-child', 'services-food', 'services-legalAid', 'services-disServ', 'services-senAssist', 'services-esl', 'services-utilAssist', 'services-tricare', 'services-serInq', 'services-currServe', 'services-dept', 'services-counseling', 'services-subAbuse', 'services-progInfo', 'services-supGroup', 'services-youthServe', 'services-ComEvent', 'services-pubSafety', 'services-volunteer', 'services-benAssistance', 'services-addServe', 'services-Population', 'active', 'services-guard', 'services-reserve', 'services-veteran', 'services-condition');
 	
 	static function init(){
 		add_action('admin_menu', array(get_class(), 'subMenuForCsv'));
@@ -88,21 +89,26 @@ class CustomPostTypes_csvParser{
 		
 		$csv->symmetrize();
 
-		$existing_services = self::get_existing_services_ID();
+		$headers = $csv->getHeaders();
+
+		$csv_keys = self::get_correct_ordered_keys($headers);
 									
 		foreach ($csv->getRawArray() as $key_index=>$csv_data) {
 			//skipping the first row
 			if($key_index == 0) continue;		
 			
-			$post_data = array_combine(self::$csvkeys, $csv_data);
-									
+			$post_data = array_combine($csv_keys, $csv_data);
+					
+
+			$existing_post_id = self::get_postId($post_data['services-id']);
+			
 			//checking if it is an update or new  service
-			if(in_array($post_data['id'], $existing_services)){
+			if($existing_post_id){
 				if(empty($post_data['title']) || empty($post_data['description'])){
 					$skipped ++;
 				}
 				else{
-					$post_ID = self::update_post($post_data);
+					$post_ID = self::update_post($post_data, $existing_post_id);
 					if($post_ID){
 						$updated ++;
 						self::create_post_meta($post_ID, $post_data);
@@ -193,9 +199,9 @@ class CustomPostTypes_csvParser{
 	}
 	
 	//update the post
-	static function update_post($post_data){
+	static function update_post($post_data, $post_id){
 		$data = array(
-				'ID' => $post_data['id'],
+				'ID' => $post_id,
 				'post_title' => $post_data['title'],
 				'post_type' => CustomPostTypes_wp::posttype,
 				'post_status' => ($post_data['active'] == 'Y') ? 'publish' : 'draft',
@@ -257,5 +263,49 @@ class CustomPostTypes_csvParser{
 		$post_type = CustomPostTypes_wp::posttype;
 		
 		return $wpdb->get_col("SELECT ID FROM $wpdb->posts WHERE post_type = '$post_type'");
+	}
+	
+	
+	static function get_postId($service_id = null){
+		if($service_id){
+			global $wpdb;
+			return $wpdb->get_var("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'services-id' AND meta_value = '$service_id'");
+		}
+		
+		return false;
+	}
+	
+	
+	//return correct ordered csv keys
+	static function get_correct_ordered_keys($headers = array()){
+		if(empty($headers)) return self::$csvkeys;
+		
+		$sanitized_headers = self::sanitize_keys($headers);
+		$keys_with_headers = self::get_headers_withKeys();
+		
+		$ordered_keys = array();
+		
+		foreach($sanitized_headers as $key => $value){
+			$ordered_keys[$key] = $keys_with_headers[$value];
+		}
+		
+		return $ordered_keys;
+	}
+	
+	static function sanitize_keys($keys = array()){
+		if(empty($keys)) return $keys;
+		
+		$sanitized = array();
+		foreach($keys as $key => $value){
+			$sanitized[$key] = strtoupper(preg_replace('#[ ]#', '', $value));
+		}
+		
+		return $sanitized;
+	}
+	
+	//reurn the csv keys with headers
+	static function get_headers_withKeys(){
+		$headers = self::sanitize_keys(self::$csv_headers);
+		return array_combine($headers, self::$csvkeys);
 	}
 }
